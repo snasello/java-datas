@@ -1,4 +1,4 @@
-package fr.snasello.datas.model;
+package fr.snasello.datas.es;
 
 import lombok.Value;
 

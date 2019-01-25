@@ -1,4 +1,4 @@
-package fr.snasello.datas.model;
+package fr.snasello.es.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
+
+import fr.snasello.datas.es.ScrollData;
+import fr.snasello.datas.es.ScrollInfo;
 
 public class ScrollDataTest {
 

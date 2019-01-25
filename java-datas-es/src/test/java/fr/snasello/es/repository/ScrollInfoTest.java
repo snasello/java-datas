@@ -1,8 +1,10 @@
-package fr.snasello.datas.model;
+package fr.snasello.es.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+
+import fr.snasello.datas.es.ScrollInfo;
 
 public class ScrollInfoTest {
 

@@ -38,8 +38,6 @@ import org.elasticsearch.search.sort.SortOrder;
 
 import fr.snasello.datas.model.Page;
 import fr.snasello.datas.model.PageData;
-import fr.snasello.datas.model.ScrollData;
-import fr.snasello.datas.model.ScrollInfo;
 import fr.snasello.datas.model.Sort;
 import fr.snasello.datas.model.SortDirection;
 import lombok.NonNull;
