@@ -23,6 +23,8 @@
 		<slf4j.version>1.7.25</slf4j.version>
 		<junit.jupiter.version>5.3.2</junit.jupiter.version>
 		<testcontainers.version>1.10.5</testcontainers.version>
+		<!-- plugin versions -->
+		<maven.jacoco.version>0.8.2</maven.jacoco.version>
 	</properties>
 
 	<modules>
@@ -79,5 +81,38 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+	<profiles>
+		<!-- A profile for code coverage analysis in ci environments -->
+		<profile>
+			<id>ci</id>
+			<activation>
+				<property>
+					<name>env.CI</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${maven.jacoco.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>test</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
