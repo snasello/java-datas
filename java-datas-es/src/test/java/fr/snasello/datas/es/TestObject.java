@@ -1,4 +1,4 @@
-package fr.snasello.es.repository;
+package fr.snasello.datas.es;
 
 import fr.snasello.datas.es.Identifiable;
 import lombok.Data;

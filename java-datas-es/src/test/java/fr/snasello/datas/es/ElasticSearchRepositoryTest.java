@@ -1,4 +1,4 @@
-package fr.snasello.es.repository;
+package fr.snasello.datas.es;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
