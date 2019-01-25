@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.com/snasello/java-datas.png)](https://api.travis-ci.com/snasello/java-datas)
+
 # Java Datas
 
 Welcome to Java Datas, a small utility framework for dealing with datas.
