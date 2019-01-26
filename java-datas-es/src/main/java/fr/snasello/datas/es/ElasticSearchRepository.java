@@ -86,7 +86,7 @@ public class ElasticSearchRepository {
 	
 	private IndexResponse executeIndex(
 			final String id,
-			@NonNull final String json, 
+			final String json, 
 			final boolean immediate) 
 		throws IOException {
 
@@ -122,8 +122,8 @@ public class ElasticSearchRepository {
 	}
 	
 	private UpdateResponse executeUpdate(
-			@NonNull final String id,
-			@NonNull final String doc,
+			final String id,
+			final String doc,
 			final boolean immediate) 
 		throws IOException  {
 		
@@ -154,7 +154,7 @@ public class ElasticSearchRepository {
 	}
 	
 	private DeleteResponse executeDelete(
-			@NonNull final String id,
+			final String id,
 			final boolean immediate) 
 		throws IOException{
 		
@@ -221,9 +221,9 @@ public class ElasticSearchRepository {
 	}
 	
 	private SearchSourceBuilder buildSearchSourceBuilder(
-			@NonNull final QueryBuilder queryBuilder,
-			@NonNull final Optional<Page> page,
-			@NonNull final List<Sort> sorts) {
+			final QueryBuilder queryBuilder,
+			final Optional<Page> page,
+			final List<Sort> sorts) {
 		
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
 		searchSourceBuilder.query(queryBuilder);
@@ -272,7 +272,7 @@ public class ElasticSearchRepository {
 	}
 
 	private boolean clearScroll(
-			@NonNull final String scrollId) 
+			final String scrollId) 
 		throws IOException {
 		
 		ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
@@ -282,15 +282,15 @@ public class ElasticSearchRepository {
 	}
 
 	private SearchResponse executeSearch(
-			@NonNull SearchSourceBuilder searchSourceBuilder)
+			SearchSourceBuilder searchSourceBuilder)
 		throws IOException {
 		
 		return executeSearch(searchSourceBuilder, Optional.empty());
 	}
 	
 	private SearchResponse executeSearch(
-			@NonNull SearchSourceBuilder searchSourceBuilder,
-			@NonNull Optional<Scroll> scroll)
+			SearchSourceBuilder searchSourceBuilder,
+			Optional<Scroll> scroll)
 		throws IOException {
 		
 		SearchRequest searchRequest = new SearchRequest(indexNameIndex.get()).types(typeName);
@@ -347,7 +347,7 @@ public class ElasticSearchRepository {
     // == utils functions
     
 	private SortOrder toSortOrder(
-			@NonNull final SortDirection sd) {
+			final SortDirection sd) {
 		
 		switch (sd) {
 		case ASC:
@@ -362,8 +362,8 @@ public class ElasticSearchRepository {
 	// == transform datas
 	
 	private <E> List<E> toDatas(
-			@NonNull final SearchHit[] hits,
-			@NonNull final Function<SearchHit, E> hitMapper){
+			final SearchHit[] hits,
+			final Function<SearchHit, E> hitMapper){
 		
 		List<E> datas = new ArrayList<>();
 		appendDatas(hits, datas, hitMapper);
@@ -371,9 +371,9 @@ public class ElasticSearchRepository {
 	}
 	
 	private <E> void appendDatas(
-			@NonNull final SearchHit[] hits,
-			@NonNull final List<E> datasToAppend,
-			@NonNull final Function<SearchHit, E> hitMapper){
+			final SearchHit[] hits,
+			final List<E> datasToAppend,
+			final Function<SearchHit, E> hitMapper){
 		
 		for (int i = 0; i < hits.length; i++) {
 			E data = hitMapper.apply(hits[i]);
