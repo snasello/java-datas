@@ -1,4 +1,5 @@
 [![Build Status](https://api.travis-ci.com/snasello/java-datas.png)](https://api.travis-ci.com/snasello/java-datas)
+[![codecov](https://codecov.io/gh/snasello/java-datas/branch/master/graph/badge.svg)](https://codecov.io/gh/snasello/java-datas)
 
 # Java Datas
 
