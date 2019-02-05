@@ -6,15 +6,9 @@ sudo: required
 services:
   - docker
 
-addons:
-  sonarcloud:
-    organization: "snasello-github" # the key of the org you chose at step #3
-    token:
-      secure: ${SONAR_TOKEN}
-
 script:
-  - mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
-
+  - mvn --batch-mode clean verify
+  
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   
