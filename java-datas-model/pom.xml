@@ -9,11 +9,6 @@
 	</parent>
 	<artifactId>java-datas-model</artifactId>
 	<dependencies>
-		<!-- lombok -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
 		<!-- JUNIT -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

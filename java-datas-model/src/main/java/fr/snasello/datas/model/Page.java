@@ -1,12 +1,5 @@
 package fr.snasello.datas.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-
-@Data
-@Builder
-@AllArgsConstructor
 public class Page {
 
 	public static final int FIRST_OFFSET = 0;
@@ -14,6 +7,12 @@ public class Page {
 	private final int offset;
 	
 	private final int limit;
+	
+	public Page(int offset, int limit) {
+		super();
+		this.offset = offset;
+		this.limit = limit;
+	}
 	
 	public static Page firstPageWithLimit(
 			final int limit) {
@@ -24,5 +23,13 @@ public class Page {
 	public Page nextPage() {
 		return new Page( offset + limit, limit);
 	}
-	
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
 }

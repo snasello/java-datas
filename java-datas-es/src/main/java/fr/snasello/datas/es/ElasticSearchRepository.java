@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -40,12 +42,7 @@ import fr.snasello.datas.model.Page;
 import fr.snasello.datas.model.PageData;
 import fr.snasello.datas.model.Sort;
 import fr.snasello.datas.model.SortDirection;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-@RequiredArgsConstructor
 public class ElasticSearchRepository {
 
 	protected final RestHighLevelClient esClient;
@@ -58,25 +55,47 @@ public class ElasticSearchRepository {
 	
 	protected final boolean immediate;
 	
+	
 	// === save
+
+	public ElasticSearchRepository(RestHighLevelClient esClient, Supplier<String> indexNameIndex,
+			Supplier<String> indexNameSearch, String typeName, boolean immediate) {
+		super();
+		
+		Objects.requireNonNull(esClient);
+		Objects.requireNonNull(indexNameIndex);
+		Objects.requireNonNull(indexNameSearch);
+		Objects.requireNonNull(indexNameSearch);
+		Objects.requireNonNull(typeName);
+		
+		this.esClient = esClient;
+		this.indexNameIndex = indexNameIndex;
+		this.indexNameSearch = indexNameSearch;
+		this.typeName = typeName;
+		this.immediate = immediate;
+	}
 
 	public <E> String save(
 			final String id,
-			@NonNull final E object,
-			@NonNull final Function<E, String> jsonMapper)
+			final E object,
+			final Function<E, String> jsonMapper)
 		throws IOException {
+		
+		Objects.requireNonNull(object);
+		Objects.requireNonNull(jsonMapper);
 		
 		return save(id, object, this.immediate, jsonMapper);
 	}
 
 	public <E> String save(
 			final String id,
-			@NonNull final E object,
+			final E object,
 			final boolean immediate,
-			@NonNull final Function<E, String> jsonMapper)
+			final Function<E, String> jsonMapper)
 		throws IOException {
 		
-		log.debug("save({},{})", object, immediate);
+		Objects.requireNonNull(object);
+		Objects.requireNonNull(jsonMapper);
 		
 		String json = jsonMapper.apply(object);
 		IndexResponse indexResponse = executeIndex(id, json, immediate);
@@ -101,22 +120,28 @@ public class ElasticSearchRepository {
 	// === update
 	
 	public <E> void update(
-			@NonNull final String id,
-			@NonNull final E doc,
-			@NonNull final Function<E, String> jsonMapper)
+			final String id,
+			final E doc,
+			final Function<E, String> jsonMapper)
 		throws IOException {
+		
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(doc);
+		Objects.requireNonNull(jsonMapper);
 		
 		update(id, doc, this.immediate, jsonMapper);		
 	}
 	
 	public <E> void update(
-			@NonNull final String id,
-			@NonNull final E doc,
+			final String id,
+			final E doc,
 			final boolean immediate,
-			@NonNull final Function<E, String> jsonMapper)
+			final Function<E, String> jsonMapper)
 		throws IOException {
 		
-		log.debug("update({},{})", doc, immediate);
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(doc);
+		Objects.requireNonNull(jsonMapper);
 		
 		executeUpdate(id, jsonMapper.apply(doc), immediate);
 	}
@@ -138,18 +163,21 @@ public class ElasticSearchRepository {
 	// === delete
 	
 	public void delete(
-			@NonNull final String id) 
+			final String id) 
 		throws IOException {
 		
+		Objects.requireNonNull(id);
+
 		delete(id, this.immediate);
 	}
 	
 	public void delete(
-			@NonNull final String id,
+			final String id,
 			final boolean immediate)
 		throws IOException {
 		
-		log.debug("delete({},{})", id, immediate);
+		Objects.requireNonNull(id);
+		
 		executeDelete(id, immediate);
 	}
 	
@@ -168,9 +196,12 @@ public class ElasticSearchRepository {
 	// == search request
 	
 	public <E> Optional<E> searchById(
-			@NonNull final String id,
-			@NonNull final Function<SearchHit, E> hitMapper) 
+			final String id,
+			final Function<SearchHit, E> hitMapper) 
 		throws IOException{
+		
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(hitMapper);
 		
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.idsQuery(typeName).addIds(id));
@@ -185,11 +216,16 @@ public class ElasticSearchRepository {
 	}
 
 	public <E> PageData<E> searchPageData(
-			@NonNull final QueryBuilder queryBuilder,
-			@NonNull final Page page,
-			@NonNull final List<Sort> sorts,
-			@NonNull final Function<SearchHit, E> hitMapper)
+			final QueryBuilder queryBuilder,
+			final Page page,
+			final List<Sort> sorts,
+			final Function<SearchHit, E> hitMapper)
 		throws IOException{
+		
+		Objects.requireNonNull(queryBuilder);
+		Objects.requireNonNull(page);
+		Objects.requireNonNull(sorts);
+		Objects.requireNonNull(hitMapper);
 		
 		Optional<Page> pageOpt = Optional.of(page);
 		
@@ -202,11 +238,15 @@ public class ElasticSearchRepository {
 	}
 	
 	public <E> List<E> searchScroll(
-			@NonNull final QueryBuilder queryBuilder,
-			@NonNull final List<Sort> sorts,
-			@NonNull final Function<SearchHit, E> hitMapper)
+			final QueryBuilder queryBuilder,
+			final List<Sort> sorts,
+			final Function<SearchHit, E> hitMapper)
 		throws IOException{
 
+		Objects.requireNonNull(queryBuilder);
+		Objects.requireNonNull(sorts);
+		Objects.requireNonNull(hitMapper);
+		
 		List<E> datas = new ArrayList<>();
 		
 		SearchSourceBuilder searchSourceBuilder = buildSearchSourceBuilder(queryBuilder, Optional.empty(), sorts);
@@ -254,15 +294,13 @@ public class ElasticSearchRepository {
 		String scrollId = searchResponse.getScrollId();
 		SearchHit[] searchHits = searchResponse.getHits().getHits();
 
-		if(searchHits != null && searchHits.length > 0) {
+		if(searchHits.length > 0) {
 			return new ScrollData<>(
 					scrollInfo.withScrollId(searchResponse.getScrollId()),
 					toDatas(searchHits, hitMapper)
 			);
 		}else {
-			if(!clearScroll(scrollId)) {
-				log.error("unable to clear scroll with id {}", scrollId);
-			}
+			clearScroll(scrollId);
 			return new ScrollData<>(
 				scrollInfo.withScrollId(searchResponse.getScrollId()),
 				Collections.emptyList()
@@ -302,46 +340,62 @@ public class ElasticSearchRepository {
 	// == bulk
 
     public <E extends Identifiable> Optional<BulkResponse> bulkSave(
-    		@NonNull final java.util.List<E> objects,
-    		@NonNull final Function<E, String> jsonMapper)
+    		final java.util.List<E> objects,
+    		final Function<E, String> jsonMapper)
     	throws IOException {
 
-    	log.debug("bulkSave {} objects", objects.size());
+		Objects.requireNonNull(objects);
+		Objects.requireNonNull(jsonMapper);
+		
     	if(objects.isEmpty()) {
     		return Optional.empty();
     	}
     	BulkRequest bulkRequest = new BulkRequest();
         for(E obj : objects) {
-            try {
-            	IndexRequest indexRequest = new IndexRequest(indexNameIndex.get(), typeName, obj.getId())  
-            			.source(jsonMapper.apply(obj), XContentType.JSON);
-                bulkRequest.add(
-                		indexRequest
-                );
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
+        	IndexRequest indexRequest = new IndexRequest(indexNameIndex.get(), typeName, obj.getId())  
+        			.source(jsonMapper.apply(obj), XContentType.JSON);
+            bulkRequest.add(
+            		indexRequest
+            );
         }
         
         return executeBulk(bulkRequest);
     }
     
     public Optional<BulkResponse> executeBulk(
-    		@NonNull BulkRequest bulkRequest) 
+    		BulkRequest bulkRequest) 
     	throws IOException {
     	
+		Objects.requireNonNull(bulkRequest);
+		
         if(bulkRequest.numberOfActions() > 0 ) {
-	        BulkResponse bulkResponse = esClient.bulk(bulkRequest);
-	        if (bulkResponse.hasFailures()) {
-	            for (BulkItemResponse response : bulkResponse.getItems()) {
-	                if (response.isFailed()) {
-	                    log.error(response.getFailureMessage());
-	                }
-	            }
-	        }
-	        return Optional.of(bulkResponse);
+	        return Optional.of(esClient.bulk(bulkRequest));
         }
         return Optional.empty();
+    }
+    
+    public void bulkLogFailure(
+    		final Optional<BulkResponse> bulkResponse,
+    		final Consumer<String> logConsumer) {
+    	
+		Objects.requireNonNull(bulkResponse);
+		Objects.requireNonNull(logConsumer);
+		
+		bulkResponse
+			.filter(BulkResponse::hasFailures)
+			.map(BulkResponse::getItems)
+			.ifPresent(items -> bulkLogFailureItems(items,logConsumer));
+    }
+    
+    private void bulkLogFailureItems(
+    		final BulkItemResponse[] responses,
+    		final Consumer<String> logConsumer) {
+    	
+        for (BulkItemResponse response : responses) {
+            if (response.isFailed()) {
+            	logConsumer.accept(response.getFailureMessage());
+            }
+        }
     }
     
     // == utils functions

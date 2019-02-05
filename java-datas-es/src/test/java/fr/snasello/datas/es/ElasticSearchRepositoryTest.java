@@ -171,6 +171,6 @@ public class ElasticSearchRepositoryTest {
     }
     
     private RestClientBuilder restClientBuilder() {
-    	return RestClient.builder(new HttpHost("localhost", 9200, "http"));
+    	return RestClient.builder(new HttpHost("localhost", 9999, "http"));
     }
 }

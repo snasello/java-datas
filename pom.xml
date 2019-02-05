@@ -19,8 +19,6 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<!-- dependencies versions -->
-		<lombok.version>1.18.0</lombok.version>
-		<slf4j.version>1.7.25</slf4j.version>
 		<junit.jupiter.version>5.3.2</junit.jupiter.version>
 		<testcontainers.version>1.10.5</testcontainers.version>
 		<!-- plugin versions -->
@@ -39,19 +37,6 @@
 				<groupId>fr.snasello.datas</groupId>
 				<artifactId>java-datas-model</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<!-- lombok -->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<!-- SLF4j -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
 			</dependency>
 			<!-- JUNIT -->
 			<dependency>
