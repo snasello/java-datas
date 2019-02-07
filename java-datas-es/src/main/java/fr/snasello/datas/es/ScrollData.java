@@ -3,7 +3,7 @@ package fr.snasello.datas.es;
 import java.util.List;
 import java.util.Objects;
 
-public class ScrollData<T> {
+class ScrollData<T> {
 	
 	private final ScrollInfo info;
 	

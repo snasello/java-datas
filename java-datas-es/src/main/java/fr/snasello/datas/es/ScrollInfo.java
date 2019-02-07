@@ -2,7 +2,7 @@ package fr.snasello.datas.es;
 
 import java.util.Objects;
 
-public class ScrollInfo {
+class ScrollInfo {
 
 	private final long keepAliveSecond;
 	private final String scrollId;
