@@ -75,7 +75,7 @@ public class PageData<T> {
 	 * @param <U> The new type
 	 * @return {@code PageData} with the new type
 	 */
-	public <U> PageData<U> mapDatas(
+	public <U> PageData<U> map(
 			Function<? super T, ? extends U> mapper){
 		
 		List<U> newDatas = datas.stream()

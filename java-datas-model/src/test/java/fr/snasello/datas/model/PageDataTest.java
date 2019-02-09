@@ -40,7 +40,7 @@ public class PageDataTest {
 	public void testMap() {
 		PageData<String> pageData = new PageData<>(Optional.of(new Page(3, 43)), 25, Arrays.asList("azerty","qwerty"));
 		
-		PageData<String> pageDataMapped = pageData.mapDatas(value -> value + "UPD");
+		PageData<String> pageDataMapped = pageData.map(value -> value + "UPD");
 		
 		assertEquals(Arrays.asList("azerty","qwerty"), pageData.getDatas());
 		assertEquals(Arrays.asList("azertyUPD","qwertyUPD"), pageDataMapped.getDatas());
