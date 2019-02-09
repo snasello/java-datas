@@ -3,6 +3,13 @@ package fr.snasello.datas.es;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Internal use for scrolling datas
+ * 
+ * @author Samuel Nasello
+ *
+ * @param <T> the type of Object in the dataset
+ */
 class ScrollData<T> {
 	
 	private final ScrollInfo info;

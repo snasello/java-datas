@@ -2,6 +2,11 @@ package fr.snasello.datas.es;
 
 import java.util.Objects;
 
+/**
+ * Internal use for scrolling datas
+ * 
+ * @author Samuel Nasello
+ */
 class ScrollInfo {
 
 	private final long keepAliveSecond;
