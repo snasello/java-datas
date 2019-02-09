@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class PageDataTest {
 
 	@Test
 	public void testNew() {		
-		PageData<String> pageData = new PageData<>(Optional.of(new Page(3, 43)), 25, Arrays.asList("azerty","qwerty"));
+		PageData<String> pageData = new PageData<>(new Page(3, 43), 25, Arrays.asList("azerty","qwerty"));
 		
 		assertEquals(25, pageData.getTotalSize());
 		
@@ -25,7 +24,7 @@ public class PageDataTest {
 	
 	@Test
 	public void testEmpty() {
-		PageData<String> pageData = PageData.empty(Optional.of(new Page(4, 32)));
+		PageData<String> pageData = PageData.empty(new Page(4, 32));
 		
 		assertEquals(0, pageData.getTotalSize());
 		
@@ -38,7 +37,7 @@ public class PageDataTest {
 	
 	@Test
 	public void testMap() {
-		PageData<String> pageData = new PageData<>(Optional.of(new Page(3, 43)), 25, Arrays.asList("azerty","qwerty"));
+		PageData<String> pageData = new PageData<>(new Page(3, 43), 25, Arrays.asList("azerty","qwerty"));
 		
 		PageData<String> pageDataMapped = pageData.map(value -> value + "UPD");
 		

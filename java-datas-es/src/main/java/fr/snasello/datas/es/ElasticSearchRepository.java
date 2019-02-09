@@ -73,7 +73,6 @@ public class ElasticSearchRepository {
 	
 	protected final boolean immediate;
 	
-	
 	// === save
 
 	/**
@@ -298,7 +297,7 @@ public class ElasticSearchRepository {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.idsQuery(typeName).addIds(id));
 		
-		SearchResponse response = executeSearch(searchSourceBuilder);
+		SearchResponse response = executeSearchRequest(buildSearchRequest(searchSourceBuilder));
 		SearchHits hits = response.getHits();
 		if(hits.getHits().length > 0) {
 			SearchHit hit = hits.getAt(0);
@@ -330,14 +329,15 @@ public class ElasticSearchRepository {
 		Objects.requireNonNull(sorts);
 		Objects.requireNonNull(hitMapper);
 		
-		Optional<Page> pageOpt = Optional.of(page);
+		SearchSourceBuilder searchSourceBuilder = buildSearchSourceBuilder(queryBuilder);
+		addPageInformation(searchSourceBuilder, page);
+		addSortInformation(searchSourceBuilder, sorts);
 		
-		SearchSourceBuilder searchSourceBuilder = buildSearchSourceBuilder(queryBuilder, pageOpt, sorts);
-		SearchResponse response =  executeSearch(searchSourceBuilder);
+		SearchResponse response = executeSearchRequest(buildSearchRequest(searchSourceBuilder));
 		List<E> datas = Arrays.stream(response.getHits().getHits())
 			.map(hitMapper)
 			.collect(Collectors.toList());
-		return new PageData<>(pageOpt, response.getHits().totalHits, datas);
+		return new PageData<>(page, response.getHits().totalHits, datas);
 	}
 	
 	/**
@@ -362,7 +362,8 @@ public class ElasticSearchRepository {
 		
 		List<E> datas = new ArrayList<>();
 		
-		SearchSourceBuilder searchSourceBuilder = buildSearchSourceBuilder(queryBuilder, Optional.empty(), sorts);
+		SearchSourceBuilder searchSourceBuilder = buildSearchSourceBuilder(queryBuilder);
+		addSortInformation(searchSourceBuilder, sorts);
 		
 		ScrollData<E> scrollDatas = scroll(searchSourceBuilder, hitMapper, new ScrollInfo(30, null));
 		datas.addAll(scrollDatas.getDatas());
@@ -374,17 +375,25 @@ public class ElasticSearchRepository {
 	}
 	
 	private SearchSourceBuilder buildSearchSourceBuilder(
-			final QueryBuilder queryBuilder,
-			final Optional<Page> page,
-			final List<Sort> sorts) {
+			final QueryBuilder queryBuilder) {
 		
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder(); 
-		searchSourceBuilder.query(queryBuilder);
-		
-		page.ifPresent(p -> searchSourceBuilder.size(p.getLimit()).from(p.getOffset()));
-		sorts.forEach(s -> searchSourceBuilder.sort(s.getField(), toSortOrder(s.getDirection())));
-		
+		searchSourceBuilder.query(queryBuilder);		
 		return searchSourceBuilder;
+	}
+	
+	private void addPageInformation(
+			final SearchSourceBuilder searchSourceBuilder,
+			final Page page) {
+		
+		searchSourceBuilder.size(page.getLimit()).from(page.getOffset());
+	}
+	
+	private void addSortInformation(
+			final SearchSourceBuilder searchSourceBuilder,
+			final List<Sort> sorts) {
+		
+		sorts.forEach(s -> searchSourceBuilder.sort(s.getField(), toSortOrder(s.getDirection())));
 	}
 	
 	private <E> ScrollData<E> scroll(
@@ -401,7 +410,10 @@ public class ElasticSearchRepository {
 			searchScrollRequest.scroll(scroll);
 			searchResponse = esClient.searchScroll(searchScrollRequest);
 		}else {
-			searchResponse = executeSearch(searchSourceBuilder, Optional.of(scroll));
+			searchResponse = executeSearchRequest(
+					addScrollInformation(
+							buildSearchRequest(searchSourceBuilder),
+							scroll));
 		}
 		
 		String scrollId = searchResponse.getScrollId();
@@ -431,23 +443,28 @@ public class ElasticSearchRepository {
 		ClearScrollResponse response = esClient.clearScroll(clearScrollRequest);
 		return response.isSucceeded();
 	}
-
-	private SearchResponse executeSearch(
-			SearchSourceBuilder searchSourceBuilder)
-		throws IOException {
-		
-		return executeSearch(searchSourceBuilder, Optional.empty());
-	}
 	
-	private SearchResponse executeSearch(
-			SearchSourceBuilder searchSourceBuilder,
-			Optional<Scroll> scroll)
-		throws IOException {
+	private SearchRequest buildSearchRequest(
+			SearchSourceBuilder searchSourceBuilder) {
 		
 		SearchRequest searchRequest = new SearchRequest(indexNameIndex.get()).types(typeName);
 		searchRequest.source(searchSourceBuilder);
-		scroll.ifPresent(searchRequest::scroll);
+		return searchRequest;
+	}
+	
+	private SearchResponse executeSearchRequest(
+			SearchRequest searchRequest)
+		throws IOException {
+		
 		return esClient.search(searchRequest);
+	}
+	
+	private SearchRequest addScrollInformation(
+			final SearchRequest searchRequest,
+			final Scroll scroll) {
+		
+		searchRequest.scroll(scroll);
+		return searchRequest;
 	}
 	
 	// == bulk

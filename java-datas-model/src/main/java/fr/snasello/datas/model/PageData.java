@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class PageData<T> {
 
-	private final Optional<Page> page;
+	private final Page page;
 	
 	private final long totalSize;
 	
@@ -28,15 +28,14 @@ public class PageData<T> {
 	
 	/**
 	 * Constructor.
-	 * @param page the page
+	 * @param page the page, can be null
 	 * @param totalSize the totalsize of the data
-	 * @param datas the datas
-	 * @throws NullPointerException if {@code page} or {@code datas} is null
+	 * @param datas the datas, cannot be null
+	 * @throws NullPointerException if {@code datas} is null
 	 */
-	public PageData(Optional<Page> page, long totalSize, List<T> datas) {
+	public PageData(Page page, long totalSize, List<T> datas) {
 		super();
-		
-		Objects.requireNonNull(page);
+
 		Objects.requireNonNull(datas);
 		
 		this.page = page;
@@ -49,7 +48,7 @@ public class PageData<T> {
 	 * @return the page
 	 */
 	public Optional<Page> getPage() {
-		return page;
+		return Optional.ofNullable(page);
 	}
 
 	/**
@@ -92,7 +91,7 @@ public class PageData<T> {
 	 * @return an empty {@code PageData}
 	 */
 	public static <T> PageData<T> empty(
-			Optional<Page> page) {
+			Page page) {
 		
 		return new PageData<>(page, 0L, Collections.emptyList());
 	}
