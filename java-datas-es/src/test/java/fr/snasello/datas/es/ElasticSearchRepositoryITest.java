@@ -230,7 +230,7 @@ public class ElasticSearchRepositoryITest {
     		assertFalse(responses.get().hasFailures());
     		
     		StringBuilder sb = new StringBuilder();
-    		repository.bulkLogFailure(responses, sb::append);
+    		responses.ifPresent(r -> repository.bulkLogFailure(r, sb::append));
     		assertEquals(sb.toString(), "");
     	}	
     }
@@ -248,7 +248,7 @@ public class ElasticSearchRepositoryITest {
     		assertTrue(responses.get().hasFailures());
     		
     		StringBuilder sb = new StringBuilder();
-    		repository.bulkLogFailure(responses, sb::append);
+    		responses.ifPresent(r -> repository.bulkLogFailure(r, sb::append));
     		assertEquals(sb.toString(), "ElasticsearchException[Elasticsearch exception [type=strict_dynamic_mapping_exception, reason=mapping set to strict, dynamic introduction of [id] within [TestType] is not allowed]]");
     	}	
     }

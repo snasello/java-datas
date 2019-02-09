@@ -527,16 +527,15 @@ public class ElasticSearchRepository {
 	 * @throws NullPointerException if {@code bulkResponse} or {@code logConsumer} is null 
      */
     public void bulkLogFailure(
-    		final Optional<BulkResponse> bulkResponse,
+    		final BulkResponse bulkResponse,
     		final Consumer<String> logConsumer) {
     	
 		Objects.requireNonNull(bulkResponse);
 		Objects.requireNonNull(logConsumer);
 		
-		bulkResponse
-			.filter(BulkResponse::hasFailures)
-			.map(BulkResponse::getItems)
-			.ifPresent(items -> bulkLogFailureItems(items,logConsumer));
+		if(bulkResponse.hasFailures()) {
+			bulkLogFailureItems(bulkResponse.getItems(), logConsumer);
+		}
     }
     
     private void bulkLogFailureItems(
